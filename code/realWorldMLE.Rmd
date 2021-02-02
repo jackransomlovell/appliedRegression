@@ -1,0 +1,64 @@
+---
+title: "Untitled"
+author: "Jack Lovell"
+date: "1/27/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# stat 3400 01/27/2021
+## BY Jack Lovell
+
+** MLE REAL WORLD DATA **
+
+### Goal for simulation
+
+We would like to fit the data to a normal model and use MLE to find the mean and SD.
+
+```{r load data}
+data <- read.csv("https://git.io/v58i8")
+```
+
+### Step 1 Visualize observations
+
+```{r}
+hist(data$x)
+plot(density(data$x))
+```
+### Step 2 Choose the model 
+
+```
+Normal model w/ parameters $\mu$ $\sigma$
+```
+
+### Step 3 Define likelihood function
+
+```{r}
+nll.normal <- function(data,par){return(-sum(log(dnorm(data, mean=par[1], sd=par[2]))))}
+```
+
+### Step 4 Find parameters
+
+The parameters in our model are the mean and standard deviation that maximize the likelihood function
+
+```{r}
+optim(par = c(1,0.1), fn = nll.normal, data=data$x)
+```
+
+### Step 5 Check goodness of fit
+
+```{r}
+x = seq(-3.4,0.01)
+plot(density(data$x))
+lines(x, dnorm(x,mean=2.85, sd=0.12), lty=2)
+```
+
+
+
+
+
+
+
