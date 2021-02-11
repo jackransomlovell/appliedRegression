@@ -1,0 +1,101 @@
+---
+title: "Boston Data (1978)"
+author: "Jack Lovell"
+date: "2/10/2021"
+output:
+  ioslides_presentation:
+    highlight: MLR Model
+    widescreen: yes
+    smaller: yes
+---
+
+## Agenda
+
+- Variables (predictors consist of continuous data and a factor)
+- medv: median property value in $1000s (Y-variables --response)
+- rm: number of rooms (P1) (cont.)
+- crim: per captia crime rate by town (P2) (cont.)
+- rad: index of accessibility to highways (Factor) (P3) (cat.)
+
+```{r Loading Boston Data}
+library(MASS)
+data(Boston)
+```
+
+## Look at the first few rows of the data, the structure, table of counts for rad
+
+```{r}
+head(Boston)
+str(Boston)
+table(Boston$rad)
+```
+## Fit model and look at results
+
+```{r}
+m_medv <- lm(medv~rm+crim+factor(rad), data=Boston)
+m_medv
+```
+
+Note: k-1 factors is because we need a refernce category.
+
+## Estimated parameters
+
+Note: rad1 has been omitted it is a reference category
+
+**Write down the fitted model**
+
+```{r}
+#crim = 0.00632
+#rad = 1
+#rm = 6.575
+
+-27.48-0.16*0.00632+7.91*6.575+0*8
+```
+```{r}
+fitted_medv <- fitted.values(m_medv)
+head(fitted_medv)
+#IN SAMPLE PREDICTION
+```
+
+
+## Prediction 2: out of sample (given new obs)
+
+- Predict some new x within the range of the data
+
+- crim = 3.6
+- rad = 5
+- rm = 6.28
+
+- Use 'predict()'
+
+```{r}
+predict(m_medv,data.frame(crim=3.6,rad="5",rm=6.28))
+```
+
+## given 2 sets of predictors
+
+- crim      rad     rm
+  3.6       5       6.28
+  3.6       24      6.28
+  
+```{r}
+newX <- data.frame(crim=c(3.6,3.6), rad=c("5","24"), rm=c(6.28,6.28))
+predict(m_medv,newX)
+```
+
+## Question: Use the model to identify whether a property with crim = 3.6, rad = "5", rm = 6 with price 36k is fair
+
+```{r}
+newX <- data.frame(crim=3.6, rad="5", rm=6)
+predict(m_medv,newX)
+```
+## Question: Use the model to identify whether a property with crim = 3.6, rad = "5", rm = 6 with price 36k is fair cont.
+
+```{r}
+# taking into account the uncertainty of prediction, we need what's called a predicition interval
+predict(m_medv,newX, interval = "prediction", level = 0.95) # Y_prediction -- raw data
+# taking into account the confidence interval 
+predict(m_medv,newX, interval = "confidence", level = 0.95) # E[Y_prediction]
+```
+
+pvalue = 1-pchisq(T,n-1
